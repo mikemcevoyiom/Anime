@@ -5,6 +5,9 @@ import requests
 import feedparser
 
 SONARR_URL = os.environ.get("SONARR_URL", "https://sonarr.manxrallying.uk/api/v3")
+SONARR_API_KEY = os.environ.get(
+    "SONARR_API_KEY", "88072cfcffd64b9fb09967534795d361"
+)
 FEED_URL = "https://feed.animetosho.org/rss2"
 
 app = Flask(__name__)

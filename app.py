@@ -30,7 +30,8 @@ def get_missing_episodes():
             ep_num = ep["episodeNumber"]
             missing.append({"series": series_title, "episode": ep_num})
         return missing
-    except Exception:
+    except Exception as e:
+        app.logger.error(f"Sonarr request failed: {e}")
         return []
 
 def parse_feed():

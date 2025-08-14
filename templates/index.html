@@ -2,6 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Missing Episodes</title>
+</head>
+<body>
+    <h1>Missing Episodes with NZB Links</h1>
+    {% if error %}<p>{{ error }}</p>{% endif %}
+    <ul>
+    {% for ep in episodes %}
+        <li>
+            {{ ep.series }} S{{ "%02d"|format(ep.season) }}E{{ "%02d"|format(ep.episode) }}
+            <ul>
+            {% for link in ep.nzb_links %}
+                <li><a href="{{ link.url }}">{{ link.title or 'NZB' }}</a></li>
+            {% else %}
+                <li>No NZB links found.</li>
+            {% endfor %}
+            </ul>
+        </li>
+    {% else %}
+        <li>No matching NZB links found.</li>
+=======
     <title>Missing Series</title>
 </head>
 <body>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Missing Series</title>
+</head>
+<body>
+    <h1>Series with Missing Episodes</h1>
+    <ul>
+    {% for name in series %}
+        <li>{{ name }}</li>
+    {% else %}
+        <li>No missing episodes found.</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

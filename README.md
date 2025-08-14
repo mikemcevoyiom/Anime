@@ -1,31 +1,19 @@
-# Anime
+# Anime Missing Episodes Viewer
 
-Simple Flask app to monitor missing anime episodes in Sonarr against the Animetosho RSS feed.
+A simple Flask web page that lists series with missing episodes from a Sonarr instance.
 
-## Setup
+## Configuration
 
-1. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Provide your Sonarr API key and optional URL via environment variables:
-   - **Windows PowerShell**
-     ```powershell
-     $env:SONARR_API_KEY='88072cfcffd64b9fb09967534795d361'
-     $env:SONARR_URL='https://sonarr.manxrallying.uk/api/v3'  # optional
-     # persist for future sessions
-     setx SONARR_API_KEY '88072cfcffd64b9fb09967534795d361'
-     setx SONARR_URL 'https://sonarr.manxrallying.uk/api/v3'
-     ```
-=======
-   ```bash
-   export SONARR_API_KEY="yourkey"
-   export SONARR_URL="https://sonarr.manxrallying.uk/api/v3"  # optional
-   ```
-main
-3. Run the app
-   ```bash
-   python app.py
-   ```
+The app uses the following environment variables:
 
-Open `http://localhost:5000/` to view NZB links for missing episodes.
+- `SONARR_URL` – Base URL of the Sonarr instance. Defaults to `https://sonarr.manxrallying.uk`.
+- `SONARR_API_KEY` – API key for Sonarr. Defaults to `88072cfcffd64b9fb09967534795d361`.
+
+## Running
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+Visit `http://localhost:5000/` to view the list of series with missing episodes.

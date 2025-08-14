@@ -1,3 +1,2 @@
 Flask
-feedparser
 requests

@@ -3,6 +3,8 @@
 A simple Flask web page that lists missing episodes from a Sonarr instance and
 checks [AnimeTosho's RSS feed](https://feed.animetosho.org) for matching NZB
 downloads.
+=======
+A simple Flask web page that lists series with missing episodes from a Sonarr instance.
 
 ## Configuration
 
@@ -20,3 +22,5 @@ python app.py
 
 Visit `http://localhost:5000/` to view missing episodes along with any NZB links
 found via AnimeTosho's feed.
+=======
+Visit `http://localhost:5000/` to view the list of series with missing episodes.

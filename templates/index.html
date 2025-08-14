@@ -21,6 +21,16 @@
         </li>
     {% else %}
         <li>No matching NZB links found.</li>
+=======
+    <title>Missing Series</title>
+</head>
+<body>
+    <h1>Series with Missing Episodes</h1>
+    <ul>
+    {% for name in series %}
+        <li>{{ name }}</li>
+    {% else %}
+        <li>No missing episodes found.</li>
     {% endfor %}
     </ul>
 </body>

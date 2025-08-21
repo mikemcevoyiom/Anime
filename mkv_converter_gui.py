@@ -32,6 +32,77 @@ def convert_folder(folder_path: str) -> None:
         messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
 
 
+def convert_folder_hevc(folder_path: str) -> None:
+    """Convert all video files in folder to HEVC codec using FFmpeg."""
+    source_dir = Path(folder_path)
+    temp_dir = source_dir / "temp"
+    temp_dir.mkdir(exist_ok=True)
+
+    for file_path in source_dir.iterdir():
+        if file_path.is_dir():
+            continue
+
+        try:
+            codec = (
+                subprocess.run(
+                    [
+                        "ffprobe",
+                        "-v",
+                        "error",
+                        "-select_streams",
+                        "v:0",
+                        "-show_entries",
+                        "stream=codec_name",
+                        "-of",
+                        "default=noprint_wrappers=1:nokey=1",
+                        str(file_path),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                ).stdout.strip().lower()
+            )
+        except subprocess.CalledProcessError:
+            continue
+
+        if codec in {"hevc", "h265"}:
+            continue
+
+        bitrate_proc = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=bit_rate",
+                "-of",
+                "default=noprint_wrappers=1:nokey=1",
+                str(file_path),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        bitrate = bitrate_proc.stdout.strip()
+
+        temp_input = temp_dir / file_path.name
+        shutil.move(str(file_path), temp_input)
+
+        cmd = ["ffmpeg", "-i", str(temp_input), "-c:v", "libx265"]
+        if bitrate.isdigit():
+            cmd.extend(["-b:v", bitrate])
+        cmd.extend(["-c:a", "copy", str(file_path)])
+        subprocess.run(cmd, check=True)
+
+        temp_input.unlink()
+
+    try:
+        temp_dir.rmdir()
+    except OSError:
+        messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
+
+
 def select_folder() -> None:
     path = filedialog.askdirectory(title="Select Source Folder")
     if path:
@@ -39,6 +110,15 @@ def select_folder() -> None:
         if messagebox.askyesno("Confirm", f"Convert files in:\n{path}?"):
             convert_folder(path)
             messagebox.showinfo("Done", "Conversion complete!")
+
+
+def select_folder_hevc() -> None:
+    path = filedialog.askdirectory(title="Select Source Folder")
+    if path:
+        folder_var.set(path)
+        if messagebox.askyesno("Confirm", f"Convert to HEVC in:\n{path}?"):
+            convert_folder_hevc(path)
+            messagebox.showinfo("Done", "HEVC conversion complete!")
 
 
 # --- GUI setup ---
@@ -54,6 +134,9 @@ title_label.pack(pady=20)
 
 select_button = tk.Button(root, text="Select Folder & Convert", command=select_folder, width=30)
 select_button.pack(pady=10)
+
+hevc_button = tk.Button(root, text="Select Folder & Update to HEVC", command=select_folder_hevc, width=30)
+hevc_button.pack(pady=10)
 
 folder_label = tk.Label(root, textvariable=folder_var, wraplength=480, justify="left")
 folder_label.pack(pady=10)

@@ -1,6 +1,6 @@
 # MKV Converter
 
-This project provides instructions for converting video files to the Matroska (MKV) container format using FFmpeg. It processes a specified directory, remuxing any non-MKV files into MKV without re-encoding. Converted files are temporarily stored in a `temp` subdirectory and moved back to the original folder, leaving only MKV files in the source directory.
+This project provides tools for processing video files with FFmpeg. It can remux non-MKV files into the Matroska (MKV) container without re-encoding and offers an option to update video streams to the HEVC codec while preserving original audio and bit rate when possible. Converted files are temporarily stored in a `temp` subdirectory and moved back to the original folder, leaving only processed files in the source directory.
 
 ## Usage
 

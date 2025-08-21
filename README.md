@@ -1,6 +1,6 @@
 # MKV Converter
 
-This project provides tools for processing video files with FFmpeg. It can remux non-MKV files into the Matroska (MKV) container without re-encoding and offers an option to update video streams to the HEVC codec while preserving original audio and bit rate when possible. Converted files are temporarily stored in a `temp` subdirectory and moved back to the original folder, leaving only processed files in the source directory.
+This project provides tools for processing video files with FFmpeg. It can remux non-MKV files into the Matroska (MKV) container without re-encoding and offers an option to update video streams to the HEVC codec while preserving original audio and bit rate when possible. During conversion the GUI displays the active file along with FFmpeg's reported FPS and timestamp, and HEVC updates leverage AMD GPUs through FFmpeg's `hevc_amf` encoder when available. Converted files are temporarily stored in a `temp` subdirectory and moved back to the original folder, leaving only processed files in the source directory.
 
 ## Usage
 

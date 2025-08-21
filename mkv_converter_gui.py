@@ -3,8 +3,26 @@ from tkinter import filedialog, messagebox
 import subprocess
 import shutil
 from pathlib import Path
+import re
 
 VERSION = "1.1"
+
+
+progress_re = re.compile(r"fps=(\S+)\s.*time=(\S+)")
+
+
+def run_ffmpeg(cmd, file_name: str) -> None:
+    """Run FFmpeg command while updating progress label."""
+    process = subprocess.Popen(cmd, stderr=subprocess.PIPE, text=True)
+    for line in process.stderr:
+        match = progress_re.search(line)
+        if match:
+            fps, tm = match.group(1), match.group(2)
+            status_var.set(f"{file_name} | {fps} fps | {tm}")
+            root.update_idletasks()
+    ret = process.wait()
+    if ret != 0:
+        raise subprocess.CalledProcessError(ret, cmd)
 
 
 def convert_folder(folder_path: str) -> None:
@@ -18,10 +36,9 @@ def convert_folder(folder_path: str) -> None:
             continue
 
         temp_output = temp_dir / (file_path.stem + ".mkv")
-        subprocess.run(
-            ["ffmpeg", "-i", str(file_path), "-c", "copy", str(temp_output)],
-            check=True,
-        )
+        status_var.set(f"Remuxing {file_path.name}")
+        root.update_idletasks()
+        run_ffmpeg(["ffmpeg", "-i", str(file_path), "-c", "copy", str(temp_output)], file_path.name)
 
         shutil.move(str(temp_output), source_dir / temp_output.name)
         file_path.unlink()
@@ -30,6 +47,7 @@ def convert_folder(folder_path: str) -> None:
         temp_dir.rmdir()
     except OSError:
         messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
+    status_var.set("Done")
 
 
 def convert_folder_hevc(folder_path: str) -> None:
@@ -89,11 +107,14 @@ def convert_folder_hevc(folder_path: str) -> None:
         temp_input = temp_dir / file_path.name
         shutil.move(str(file_path), temp_input)
 
-        cmd = ["ffmpeg", "-i", str(temp_input), "-c:v", "libx265"]
+        status_var.set(f"Converting {file_path.name}")
+        root.update_idletasks()
+
+        cmd = ["ffmpeg", "-hwaccel", "auto", "-i", str(temp_input), "-c:v", "hevc_amf"]
         if bitrate.isdigit():
             cmd.extend(["-b:v", bitrate])
         cmd.extend(["-c:a", "copy", str(file_path)])
-        subprocess.run(cmd, check=True)
+        run_ffmpeg(cmd, file_path.name)
 
         temp_input.unlink()
 
@@ -101,6 +122,7 @@ def convert_folder_hevc(folder_path: str) -> None:
         temp_dir.rmdir()
     except OSError:
         messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
+    status_var.set("Done")
 
 
 def select_folder() -> None:
@@ -140,6 +162,10 @@ hevc_button.pack(pady=10)
 
 folder_label = tk.Label(root, textvariable=folder_var, wraplength=480, justify="left")
 folder_label.pack(pady=10)
+
+status_var = tk.StringVar(value="")
+status_label = tk.Label(root, textvariable=status_var, wraplength=480, justify="left")
+status_label.pack(pady=5)
 
 exit_button = tk.Button(root, text="Exit", command=root.quit, width=15)
 exit_button.place(relx=1.0, rely=1.0, anchor="se", x=-10, y=-10)

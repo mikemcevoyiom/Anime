@@ -1,26 +1,17 @@
-# Anime Missing Episodes Viewer
+# MKV Converter
 
-A simple Flask web page that lists missing episodes from a Sonarr instance and
-checks [AnimeTosho's RSS feed](https://feed.animetosho.org) for matching NZB
-downloads.
-=======
-A simple Flask web page that lists series with missing episodes from a Sonarr instance.
+This project provides instructions for converting video files to the Matroska (MKV) container format using FFmpeg. It processes a specified directory, remuxing any non-MKV files into MKV without re-encoding. Converted files are temporarily stored in a `temp` subdirectory and moved back to the original folder, leaving only MKV files in the source directory.
 
-## Configuration
+## Usage
 
-The app uses the following environment variables:
+1. Install [FFmpeg](https://ffmpeg.org/) and ensure it is available on your system PATH.
+2. Adjust the Python script's `source_dir` to point at the folder you wish to process (e.g., `D:\\Video\\unprocessed\\porn` on Windows).
+3. Run the script. It creates a `temp` directory inside the source folder, remuxes files to MKV, then moves them back and deletes the originals.
+4. If the `temp` directory is empty after processing, it is removed automatically.
 
-- `SONARR_URL` – Base URL of the Sonarr instance. Defaults to `https://sonarr.manxrallying.uk`.
-- `SONARR_API_KEY` – API key for Sonarr. Defaults to `88072cfcffd64b9fb09967534795d361`.
+## Requirements
 
-## Running
+- Python 3
+- FFmpeg
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-Visit `http://localhost:5000/` to view missing episodes along with any NZB links
-found via AnimeTosho's feed.
-=======
-Visit `http://localhost:5000/` to view the list of series with missing episodes.
+Ensure you back up important files before running the script.

@@ -48,6 +48,7 @@ def convert_folder(folder_path: str) -> None:
     except OSError:
         messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
     status_var.set("Done")
+    codec_var.set("Codec: N/A")
 
 
 def convert_folder_hevc(folder_path: str) -> None:
@@ -83,7 +84,12 @@ def convert_folder_hevc(folder_path: str) -> None:
         except subprocess.CalledProcessError:
             continue
 
+        codec_var.set(f"Codec: {codec or 'unknown'}")
+        root.update_idletasks()
+
         if codec in {"hevc", "h265"}:
+            status_var.set(f"Skipping {file_path.name} (codec {codec})")
+            root.update_idletasks()
             continue
 
         bitrate_proc = subprocess.run(
@@ -123,6 +129,7 @@ def convert_folder_hevc(folder_path: str) -> None:
     except OSError:
         messagebox.showinfo("Info", "Temp directory not empty; remove manually if desired.")
     status_var.set("Done")
+    codec_var.set("Codec: N/A")
 
 
 def select_folder() -> None:
@@ -157,8 +164,13 @@ title_label.pack(pady=20)
 select_button = tk.Button(root, text="Select Folder & Convert", command=select_folder, width=30)
 select_button.pack(pady=10)
 
-hevc_button = tk.Button(root, text="Select Folder & Update to HEVC", command=select_folder_hevc, width=30)
-hevc_button.pack(pady=10)
+hevc_frame = tk.Frame(root)
+hevc_button = tk.Button(hevc_frame, text="Select Folder & Update to HEVC", command=select_folder_hevc, width=30)
+hevc_button.pack(side="left")
+codec_var = tk.StringVar(value="Codec: N/A")
+codec_label = tk.Label(hevc_frame, textvariable=codec_var, width=20, anchor="w")
+codec_label.pack(side="left", padx=10)
+hevc_frame.pack(pady=10)
 
 folder_label = tk.Label(root, textvariable=folder_var, wraplength=480, justify="left")
 folder_label.pack(pady=10)
